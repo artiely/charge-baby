@@ -1,0 +1,13 @@
+.el-card.no-shadow {
+  box-shadow: none;
+  border: none;
+  border-radius: 0;
+}
+.el-input__inner:focus {
+    outline: 0;
+    box-shadow: 0 0 0 2px rgba(45,140,240,.2);
+}
+.is-error .el-input__inner:focus {
+  outline: 0;
+  box-shadow: 0 0 0 2px rgba(237,63,20,.2)
+}
