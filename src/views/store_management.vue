@@ -1,31 +1,54 @@
 <template>
-  <a-table :columns="columns" :rowKey="record => record.login.uuid" :dataSource="data" :pagination="pagination" :loading="loading" @change="handleTableChange">
-    <template slot="name" slot-scope="name">
-      {{name.first}} {{name.last}}
-    </template>
-  </a-table>
+  <div>
+    <a-table :columns="columns" size="middle" :dataSource="data" :pagination="false" :loading="loading" @change="handleTableChange">
+      <template slot="operation" slot-scope="text, record">
+        <!-- <a-popconfirm
+          title="Sure to delete?"
+          @confirm="() => onDelete(record.key)">
+          <a href="#">Delete</a>
+        </a-popconfirm>-->
+        <a href="#">编辑</a>
+      </template>
+    </a-table>
+    <a-pagination size="small" :defaultCurrent="1" :total="total" @change="onChange" />
+  </div>
 </template>
 <script>
 const columns = [
   {
-    title: 'Name',
-    dataIndex: 'name',
-    sorter: true,
-    width: '20%',
-    scopedSlots: { customRender: 'name' }
+    title: '商户信息',
+    customRender: (text, row, index) => {
+      return {
+        children: `${row.member.mobile}-${row.member.name}`
+      }
+    },
+    key: 'name',
+    dataIndex: 'member.name'
   },
   {
-    title: 'Gender',
-    dataIndex: 'gender',
-    filters: [
-      { text: 'Male', value: 'male' },
-      { text: 'Female', value: 'female' }
-    ],
-    width: '20%'
+    key: 'created_at',
+    title: '入住时间',
+    dataIndex: 'created_at'
   },
   {
-    title: 'Email',
-    dataIndex: 'email'
+    key: 'address',
+    title: '商户地址',
+    dataIndex: 'box.address'
+  },
+  {
+    key: 'duration',
+    title: '时长',
+    dataIndex: 'duration'
+  },
+  {
+    key: 'status_cn',
+    title: '状态',
+    dataIndex: 'status_cn'
+  },
+  {
+    title: '操作',
+    dataIndex: 'operation',
+    scopedSlots: { customRender: 'operation' }
   }
 ]
 
@@ -38,50 +61,42 @@ export default {
       data: [],
       pagination: {},
       loading: false,
-      columns
+      total: 10,
+      columns,
+      query: {
+        page: 1,
+        limit: 10
+      }
+    }
+  },
+  watch: {
+    query: {
+      handler() {
+        this.fetch()
+      },
+      deep: true
     }
   },
   methods: {
     handleTableChange(pagination, filters, sorter) {
-      console.log(pagination)
-      const pager = { ...this.pagination }
-      pager.current = pagination.current
-      this.pagination = pager
-      this.fetch({
-        results: pagination.pageSize,
-        page: pagination.current,
-        sortField: sorter.field,
-        sortOrder: sorter.order,
-        ...filters
-      })
+      this.fetch()
     },
     async fetch() {
       this.loading = true
-      let res = await this.$api.ORDER_LIST({ page: 1, limit: 10 })
-      const pagination = { ...this.pagination }
-      // Read total count from server
-      // pagination.total = data.totalCount;
-      pagination.total = 200
-      this.loading = false
-      this.data = res.results
-      this.pagination = pagination
-      // reqwest({
-      //   url: 'https://randomuser.me/api',
-      //   method: 'get',
-      //   data: {
-      //     results: 10,
-      //     ...params,
-      //   },
-      //   type: 'json',
-      // }).then((data) => {
-      //   const pagination = { ...this.pagination };
-      //   // Read total count from server
-      //   // pagination.total = data.totalCount;
-      //   pagination.total = 200;
-      //   this.loading = false;
-      //   this.data = data.results;
-      //   this.pagination = pagination;
-      // });
+      let res = await this.$api.ORDER_LIST(this.query)
+      if (res.data) {
+        this.loading = false
+        this.data = res.data.map(v => {
+          v.key = v.id
+          return v
+        })
+        this.total = res.total
+        console.log('123123', this.data)
+      }
+    },
+    onChange(pageNumber) {
+      console.log('Page: ', pageNumber)
+      this.query.page = pageNumber
     }
   }
 }

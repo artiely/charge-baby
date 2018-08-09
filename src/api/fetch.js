@@ -42,7 +42,7 @@ export default function fetch(options) {
         // console.log('----', token)
         // 这里将token设置到headers中，header的key是Authorization，这个key值根据你的需要进行修改即可
         if (token) {
-          config.headers.Authorization = token
+          config.headers.Authorization = `Bearer ${token}`
         }
         return config
       },
