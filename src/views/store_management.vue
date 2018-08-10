@@ -1,6 +1,9 @@
 <template>
   <div>
-    <a-table :columns="columns" size="middle" :dataSource="data" :pagination="false" :loading="loading" @change="handleTableChange">
+    <a-table :columns="columns" size="middle" :dataSource="data" :pagination="false" :loading="loading" @change="handleTableChange" :scroll="{ x: 1000 }">
+      <template slot="created_at" slot-scope="text,record">
+        <a href="#">{{record.member.mobile}} - {{record.member.name}}</a>
+      </template>
       <template slot="operation" slot-scope="text, record">
         <!-- <a-popconfirm
           title="Sure to delete?"
@@ -10,20 +13,24 @@
         <a href="#">编辑</a>
       </template>
     </a-table>
-    <a-pagination size="small" :defaultCurrent="1" :total="total" @change="onChange" />
+    <a-pagination  :defaultCurrent="1" :total="total" @change="onChange" style="margin-top:6px"/>
   </div>
 </template>
 <script>
 const columns = [
   {
     title: '商户信息',
-    customRender: (text, row, index) => {
-      return {
-        children: `${row.member.mobile}-${row.member.name}`
-      }
-    },
-    key: 'name',
-    dataIndex: 'member.name'
+    // customRender: (text, row, index) => {
+    //   return {
+    //     children: `${row.member.mobile}-${row.member.name}`
+    //   }
+    // },
+    key: 'member',
+    dataIndex: 'member',
+    // slots: { title: '商户信息' },
+    scopedSlots: { customRender: 'created_at' },
+    width: 150,
+    fixed: 'left'
   },
   {
     key: 'created_at',
@@ -48,13 +55,15 @@ const columns = [
   {
     title: '操作',
     dataIndex: 'operation',
-    scopedSlots: { customRender: 'operation' }
+    scopedSlots: { customRender: 'operation' },
+    width: 100,
+    fixed: 'right'
   }
 ]
 
 export default {
   mounted() {
-    this.fetch()
+    this.getData()
   },
   data() {
     return {
@@ -72,16 +81,16 @@ export default {
   watch: {
     query: {
       handler() {
-        this.fetch()
+        this.getData()
       },
       deep: true
     }
   },
   methods: {
     handleTableChange(pagination, filters, sorter) {
-      this.fetch()
+      this.getData()
     },
-    async fetch() {
+    async getData() {
       this.loading = true
       let res = await this.$api.ORDER_LIST(this.query)
       if (res.data) {
@@ -91,11 +100,9 @@ export default {
           return v
         })
         this.total = res.total
-        console.log('123123', this.data)
       }
     },
     onChange(pageNumber) {
-      console.log('Page: ', pageNumber)
       this.query.page = pageNumber
     }
   }

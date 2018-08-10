@@ -15,7 +15,7 @@
         </a-form-item>
       </a-form>
       <div slot="footer">
-        <a-button type='primary' @click="check" style="width:100%" size="large">登录</a-button>
+        <a-button type='primary' @click="check" style="width:100%" size="large" loading>登录</a-button>
       </div>
     </a-modal>
     <div id="particles-js"></div>
@@ -37,7 +37,8 @@ export default {
       checkNick: false,
       formItemLayout,
       formTailLayout,
-      centerDialogVisible: true
+      centerDialogVisible: true,
+      loading: false
     }
   },
   computed: {
@@ -49,11 +50,12 @@ export default {
     check() {
       this.form.validateFields(async(err, vals) => {
         if (!err) {
-          console.info('success', vals)
+          this.loading = true
           let res = await this.$api.LOGIN(vals)
           if (res.access_token) {
             Cookies.set('access_token', res.access_token)
             this.$router.replace('/store_management')
+            this.loading = false
           }
         }
       })
