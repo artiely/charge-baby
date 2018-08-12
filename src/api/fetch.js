@@ -1,12 +1,14 @@
 import axios from 'axios'
-import router from '@/router'
+// import router from '@/router'
 import Cookies from 'js-cookie'
 import NProgress from 'nprogress'
+import { notification } from 'ant-design-vue'
 import 'nprogress/nprogress.css'
 // import isJSON from 'is-json'
 // var isProduction = process.env.NODE_ENV === 'production'
 // const baseURL = isProduction ? 'http://localhost:9111' : 'http://localhost:9111'
 const baseURL = 'https://charger.91231.net'
+
 export default function fetch(options) {
   return new Promise((resolve, reject) => {
     const instance = axios.create({
@@ -14,6 +16,10 @@ export default function fetch(options) {
       headers: {
         // 'Accept': 'application/json',
         'Content-type': 'application/json'
+      },
+      validateStatus: function(status) {
+        console.log('status', status)
+        return status >= 200 && status < 500 // default
       },
       transformResponse: [
         //   (data) => {
@@ -67,16 +73,13 @@ export default function fetch(options) {
     instance(options)
       .then(res => {
         NProgress.done()
-        if (res.code === 1000) {
-          Cookies.remove('__userInfo')
-          router.replace({
-            name: 'Login'
+        if (res.status !== 200) {
+          notification['error']({
+            message: '好像出错了',
+            description: res.data.message
           })
-        } else {
-          if (res.status === 200) {
-            resolve(res.data)
-          }
         }
+        resolve(res.data)
         return false
       })
       .catch(error => {

@@ -4,3 +4,4 @@ export const SET_TOKEN = 'SET_TOKEN' // token
 export const FILTER_ROLE = 'FILTER_ROLE' // 过滤权限
 export const SET_LANG = 'SET_LANG' // 语言
 export const LAYOUT = 'LAYOUT' // 布局
+export const USER_INFO = 'USER_INFO' // 布局

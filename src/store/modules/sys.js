@@ -1,5 +1,5 @@
 import * as types from '../mutation-types'
-import {asyncRouterMap} from '@/router/index'
+import { asyncRouterMap } from '@/router/index'
 import Cookies from 'js-cookie'
 
 // initial state
@@ -8,7 +8,8 @@ const state = {
   isCollapse: false, // 菜单状态是否收起
   menu: null, // 菜单
   role: null, // 角色权限
-  lang: 'zh' // 语言
+  lang: 'zh', // 语言
+  userInfo: null
 }
 
 /**
@@ -79,13 +80,15 @@ const mutations = {
   [types.SET_LANG](state, payload) {
     state.lang = payload
     window.localStorage.setItem('lang', payload)
+  },
+  // 登陆者信息
+  [types.USER_INFO](state, payload) {
+    state.userInfo = payload
   }
 }
 
 // actions
-const actions = {
-
-}
+const actions = {}
 
 export default {
   state,

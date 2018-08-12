@@ -10,44 +10,88 @@ import NProgress from 'nprogress'
 
 Vue.use(Router)
 
-let constantRouterMap = [{
-  path: '/login',
-  name: 'Login',
-  component: Login
-}]
+let constantRouterMap = [
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  }
+]
 
 export const asyncRouterMap = [
   {
     path: '/',
     name: 'Home',
     component: Home,
-    redirect: '/store_management',
+    redirect: '/store_list',
     children: [
       {
-        path: '/store_management',
-        name: 'store_management',
-        component: lazyLoading('views/store_management'),
+        path: '/store_list',
+        name: 'store_list',
+        component: lazyLoading('views/store_list'),
         meta: {
           auth: true,
           title: '商户管理'
         }
       },
       {
-        path: '/cabinet_management',
-        name: 'Index',
-        component: lazyLoading('views/SHGL'),
+        path: '/box_list',
+        name: 'box_list',
+        component: lazyLoading('views/box_list'),
         meta: {
           auth: true,
           title: '机柜管理'
         }
       },
       {
-        path: '/charge_baby_management',
-        name: 'Index',
-        component: lazyLoading('views/SHGL'),
+        path: '/charge_list',
+        name: 'charge_list',
+        component: lazyLoading('views/charge_list'),
         meta: {
           auth: true,
           title: '充电宝管理'
+        }
+      },
+      {
+        path: '/boxtype_list',
+        name: 'boxtype_list',
+        component: lazyLoading('views/boxtype_list'),
+        meta: {
+          auth: true,
+          title: '机柜类型'
+        }
+      },
+      {
+        path: '/order_list',
+        name: 'order_list',
+        component: lazyLoading('views/order_list'),
+        meta: {
+          auth: true,
+          title: '机柜类型'
+        }
+      },
+      {
+        path: '/member_list',
+        name: 'member_list',
+        component: lazyLoading('views/member_list'),
+        meta: {
+          auth: true
+        }
+      },
+      {
+        path: '/depositlog_list',
+        name: 'depositlog_list',
+        component: lazyLoading('views/depositlog_list'),
+        meta: {
+          auth: true
+        }
+      },
+      {
+        path: '/setting_list',
+        name: 'setting_list',
+        component: lazyLoading('views/setting_list'),
+        meta: {
+          auth: true
         }
       }
     ]
@@ -66,20 +110,49 @@ export const asyncRouterMap = [
 const MENU = [
   {
     title: '商户管理',
-    path: '/store_management'
+    icon: 'shop',
+    path: '/store_list'
   },
   {
     title: '设备管理',
+    icon: 'appstore-o',
     children: [
       {
         title: '机柜管理',
-        path: '/cabinet_management'
+        path: '/box_list',
+        icon: 'database'
       },
       {
         title: '充电宝管理',
-        path: '/charge_baby_management'
+        path: '/charge_list',
+        icon: 'hdd'
       }
     ]
+  },
+  {
+    title: '机柜类型',
+    path: '/boxtype_list',
+    icon: 'layout'
+  },
+  {
+    title: '订单列表',
+    path: '/order_list',
+    icon: 'profile'
+  },
+  {
+    title: '押金列表',
+    path: '/depositlog_list',
+    icon: 'red-envelope'
+  },
+  {
+    title: '用户列表',
+    path: '/member_list',
+    icon: 'team'
+  },
+  {
+    title: '系统设置',
+    path: '/setting_list',
+    icon: 'setting'
   }
 ]
 

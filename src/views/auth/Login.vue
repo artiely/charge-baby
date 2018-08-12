@@ -1,21 +1,21 @@
 <template>
   <div class="v-bg">
-    <a-modal title="登录" v-model="centerDialogVisible" width="300px" style="width:300px!important" :maskClosable="false" center :show-close="false" :modal="false" :closable="false" class="login-modal">
+    <a-modal title="登录" v-model="centerDialogVisible" width="400px" style="width:300px!important" :maskClosable="false" center :show-close="false" :modal="false" :closable="false" class="login-modal">
       <a-form :autoFormCreate="(form)=>{this.form = form}">
-        <a-form-item :labelCol="formItemLayout.labelCol" :wrapperCol="formItemLayout.wrapperCol" label='邮箱' fieldDecoratorId="email" :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入邮箱地址' }]}">
+        <a-form-item :labelCol="formItemLayout.labelCol" :wrapperCol="formItemLayout.wrapperCol" label='邮箱' fieldDecoratorId="email" :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入邮箱地址'}],initialValue:email}">
           <a-input placeholder='请输入邮箱地址' />
         </a-form-item>
-        <a-form-item :labelCol="formItemLayout.labelCol" :wrapperCol="formItemLayout.wrapperCol" label='密码' fieldDecoratorId="password" :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入密码' }]}">
-          <a-input placeholder='请输入密码' />
+        <a-form-item :labelCol="formItemLayout.labelCol" :wrapperCol="formItemLayout.wrapperCol" label='密码' fieldDecoratorId="password" :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入密码' }],initialValue:password}">
+          <a-input placeholder='请输入密码' type="password" />
         </a-form-item>
         <a-form-item :labelCol="formTailLayout.labelCol" :wrapperCol="formTailLayout.wrapperCol" style="margin-bottom:0">
-          <a-checkbox :checked="checkNick" @change="handleChange">
+          <a-checkbox v-model="memory" @change="memory!=memory">
             记住密码
           </a-checkbox>
         </a-form-item>
       </a-form>
       <div slot="footer">
-        <a-button type='primary' @click="check" style="width:100%" size="large" loading>登录</a-button>
+        <a-button type='primary' @click="check" style="width:100%" size="large" :loading="loading">登录</a-button>
       </div>
     </a-modal>
     <div id="particles-js"></div>
@@ -34,11 +34,13 @@ const formTailLayout = {
 export default {
   data() {
     return {
-      checkNick: false,
+      memory: true,
       formItemLayout,
       formTailLayout,
       centerDialogVisible: true,
-      loading: false
+      loading: false,
+      email: 'admin@admin.com',
+      password: 'admin'
     }
   },
   computed: {
@@ -52,18 +54,15 @@ export default {
         if (!err) {
           this.loading = true
           let res = await this.$api.LOGIN(vals)
-          if (res.access_token) {
+          if (res.status !== 'error') {
             Cookies.set('access_token', res.access_token)
-            this.$router.replace('/store_management')
-            this.loading = false
+            this.$router.replace('/store_list')
+            let userInfo = await this.$api.USER_INFO()
+            console.log('userinfo', userInfo)
+            this.$store.commit('USER_INFO', userInfo)
           }
+          this.loading = false
         }
-      })
-    },
-    handleChange(e) {
-      this.checkNick = e.target.checked
-      this.$nextTick(() => {
-        this.form.validateFields(['nickname'], { force: true })
       })
     },
     beforeRouteLeave(to, from, next) {

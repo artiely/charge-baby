@@ -1,6 +1,6 @@
 var proxyList = {
   '/': {
-    target: 'https://charger.91231.net/', //jj
+    // target: 'https://charger.91231.net/', //jj
     changeOrigin: true,
     pathRewrite: {
       // '^/ns-index': ''
