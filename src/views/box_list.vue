@@ -2,7 +2,7 @@
   <div>
     <a-card>
       <div slot="title">
-        <a-input-search placeholder="商户名/设备类型" v-model="search" enterButton style="width:400px" />
+        <a-input-search placeholder="商户名/设备类型" v-model="search"  style="width:400px" />
         <a-range-picker @change="timeChange" format="YYYY-MM-DD" class="pull-right" />
       </div>
       <!-- table -->
@@ -27,8 +27,8 @@
           </span>
         </template>
         <template slot="qrcode" slot-scope="text, record">
-          <span >
-            <span  @click="getQrcode(record)">
+          <span>
+            <span @click="getQrcode(record)">
               <a-icon type="qrcode" /> 点击生成
             </span>
             <a v-if="record.qrcode" :href="record.qrcode" :download="record.code">下载</a>
@@ -78,8 +78,8 @@ const columns = [
     key: 'code',
     dataIndex: 'code',
     scopedSlots: { customRender: 'code' },
-     width: 150,
-      fixed: 'left'
+    width: 150,
+    fixed: 'left'
   },
   {
     key: 'created_at',
@@ -92,7 +92,7 @@ const columns = [
     key: 'type.name',
     title: '设备类型',
     dataIndex: 'type.name',
-     width: 150
+    width: 150
   },
   {
     key: 'box_status_cn',
@@ -124,14 +124,14 @@ const columns = [
     key: 'store.name',
     title: '所属商户',
     dataIndex: 'store.name',
-     width: 150
+    width: 150
   },
   {
     key: 'qrcode',
     title: '二维码',
     dataIndex: 'qrcode',
     scopedSlots: { customRender: 'qrcode' },
-     width: 150
+    width: 150
   },
   {
     title: '操作',
@@ -150,7 +150,7 @@ export default {
       boxtype: null,
       status: true,
       labelCol: { span: 7 },
-      wrapperCol: { span: 17 },
+      wrapperCol: { span: 17 }
     }
   },
   watch: {
@@ -169,7 +169,7 @@ export default {
     },
     info() {},
     async getQrcode(row) {
-      let res = await this.$api.BOX_QRCODE({code:row.code})
+      let res = await this.$api.BOX_QRCODE({ code: row.code })
       const newData = [...this.data]
       const target = newData.filter(item => row.key === item.key)[0]
       if (target) {

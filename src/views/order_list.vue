@@ -2,7 +2,7 @@
   <div>
     <a-card :loading="preLoading">
       <template slot="title">
-        <a-input-search placeholder="商户名/用户名/手机号/机柜id/充电宝id" v-model="search" enterButton style="width:400px" />
+        <a-input-search placeholder="商户名/用户名/手机号/机柜id/充电宝id" v-model="search" style="width:400px" />
         <a-range-picker @change="timeChange" format="YYYY-MM-DD" class="pull-right" />
       </template>
 
@@ -12,18 +12,54 @@
           <a href="#">{{record.member.mobile}} - {{record.member.name}}</a>
         </template>
         <template slot="status_cn" slot-scope="text,record">
-          <a-tag color="cyan" v-if="text=='已借出'">已借出</a-tag>
-          <a-tag color="blue" v-if="text=='已归还'">已归还</a-tag>
-          <a-tag color="green" v-if="text=='已支付'">已支付</a-tag>
-          <a-tag color="red" v-if="text=='已丢失'">已丢失</a-tag>
-          <!-- <a href="#">{{record.member.mobile}} - {{record.member.name}}</a> -->
+          <a-popover title="流程时间" placement="rightTop">
+            <template slot="content">
+              <a-timeline >
+                <a-timeline-item color="green" v-if="record.start_time"><a-icon slot="dot" type="clock-circle-o" />借出 {{record.start_time}}</a-timeline-item>
+                <a-timeline-item color="green" v-if="record.end_time"><a-icon slot="dot" type="clock-circle-o" />归还 {{record.end_time}}</a-timeline-item>
+                <a-timeline-item color="green" v-if="record.pay_time"><a-icon slot="dot" type="clock-circle-o" />支付 {{record.pay_time}}</a-timeline-item>
+              </a-timeline>
+            </template>
+            <a-tag color="cyan" v-if="text=='已借出'">已借出</a-tag>
+            <a-tag color="blue" v-if="text=='已归还'">已归还</a-tag>
+            <a-tag color="green" v-if="text=='已支付'">已支付</a-tag>
+            <a-tag color="red" v-if="text=='已丢失'">已丢失</a-tag>
+          </a-popover>
         </template>
-        <template slot="operation" slot-scope="text, record">
-          <!-- <a @click="edit(record)">编辑</a> -->
+        <!-- <template slot="operation" slot-scope="text, record">
           <a @click="detail(record)">详情</a>
-        </template>
+        </template> -->
       </a-table>
       <a-pagination :defaultCurrent="1" v-if="last_page>1" :total="total" @change="onChange" style="margin-top:6px" />
+      <!-- cardlist -->
+      <!-- <div v-for="item in data">
+        <a-row>
+          <a-col :xs="24" :sm="12" :md="6" :lg="6" :xl="4">
+            <div class="user-info">
+              <a-avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" /> {{item.member.name}} {{item.member.mobile}}
+            </div>
+          </a-col>
+          <a-col :xs="24" :sm="12" :md="6" :lg="6" :xl="4">
+            <div>
+              <div>
+                <a-icon type="database" /> {{item.box.code}}
+              </div>
+              <div>
+                <a-icon type="hdd" />{{item.charger.code}}
+              </div>
+            </div>
+          </a-col>
+          <a-col :xs="24" :sm="12" :md="6" :lg="6" :xl="4">
+            <a-timeline pending="等待支付..." v-if="!item.pay_time">
+              <a-timeline-item v-if="item.start_time">借出 {{item.start_time}}</a-timeline-item>
+              <a-timeline-item v-if="item.end_time">归还 {{item.end_time}}</a-timeline-item>
+              <a-timeline-item v-if="item.pay_time">支付 {{item.pay_time}}</a-timeline-item>
+            </a-timeline>
+          </a-col>
+
+        </a-row>
+        <a-divider />
+      </div> -->
     </a-card>
 
     <!-- detail -->
@@ -113,13 +149,13 @@ const columns = [
     title: '商户',
     dataIndex: 'store.name'
   },
-  {
-    title: '操作',
-    dataIndex: 'operation',
-    scopedSlots: { customRender: 'operation' },
-    width: 150,
-    fixed: 'right'
-  }
+  // {
+  //   title: '操作',
+  //   dataIndex: 'operation',
+  //   scopedSlots: { customRender: 'operation' },
+  //   width: 150,
+  //   fixed: 'right'
+  // }
 ]
 
 export default {
@@ -139,6 +175,9 @@ export default {
       } else if (this.row.start_time) {
         return 0
       }
+    },
+    pending() {
+      return '等待支付'
     }
   },
   methods: {

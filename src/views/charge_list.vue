@@ -3,7 +3,7 @@
     <a-card>
       <div slot="title">
     <!-- search -->
-    <a-input-search placeholder="商户名/设备类型" v-model="search" enterButton style="width:400px" />
+    <a-input-search placeholder="商户名/设备类型" v-model="search"  style="width:400px" />
     <a-range-picker @change="timeChange" format="YYYY-MM-DD" class="pull-right"/>
     </div>
     <!-- table -->

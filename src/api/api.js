@@ -57,7 +57,6 @@ const BOX_DOWNLOAD_IMG = params => {
   return fetch({ url: '/v1/boxes/downloadimg', method: 'get', params: params })
 }
 
-
 const ORDER_PUT_POST = params => {
   if (!params.id) {
     return fetch({ url: `/v1/stores/`, method: 'post', data: params })

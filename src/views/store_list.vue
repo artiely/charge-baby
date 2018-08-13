@@ -2,7 +2,7 @@
   <div>
     <a-card>
       <div slot="title">
-        <a-input-search placeholder="商户名" v-model="search" enterButton style="width:400px" />
+        <a-input-search placeholder="商户名" v-model="search"  style="width:400px" />
         <a-button type="primary" @click="add" class="pull-right">添加商户</a-button>
       </div>
       <a-table :columns="columns" size="middle" :dataSource="data" :pagination="false" :loading="loading" @change="handleTableChange" :scroll="{ x: scrollX }">
