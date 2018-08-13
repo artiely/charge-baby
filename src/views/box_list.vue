@@ -6,7 +6,7 @@
         <a-range-picker @change="timeChange" format="YYYY-MM-DD" class="pull-right" />
       </div>
       <!-- table -->
-      <a-table :columns="columns" size="middle" :dataSource="data" :pagination="false" :loading="loading" @change="handleTableChange" :scroll="{ x: scrollX }">
+      <a-table :columns="columns" size="middle" :dataSource="data" :pagination="false" :loading="loading" @change="handleTableChange" :scroll="{ x: 1400 }">
         <template slot="created_at" slot-scope="text,record">
           <a href="#">{{record.mobile}} - {{record.name}}</a>
         </template>
@@ -27,12 +27,16 @@
           </span>
         </template>
         <template slot="qrcode" slot-scope="text, record">
-          <a :href="record.qrcode" target="_block">
-            <a-icon type="qrcode" /> 点击查看
-          </a>
+          <span >
+            <span  @click="getQrcode(record)">
+              <a-icon type="qrcode" /> 点击生成
+            </span>
+            <a v-if="record.qrcode" :href="record.qrcode" :download="record.code">下载</a>
+          </span>
         </template>
         <template slot="operation" slot-scope="text, record">
           <a @click="edit(record)">编辑</a>
+          <a @click="info(record)">详情</a>
         </template>
       </a-table>
       <a-pagination :defaultCurrent="1" v-if="last_page>1" :total="total" @change="onChange" style="margin-top:6px" />
@@ -45,10 +49,10 @@
             <a-select-option :value="item.id" v-for="item in boxtype" :key="item.id">{{item.name}}</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label='单价/元' :labelCol="labelCol" :wrapperCol="wrapperCol" fieldDecoratorId="unit_price" :fieldDecoratorOptions="{rules: [{ required: true,message: '请输入商户密码'}],initialValue:row.unit_price}">
+        <a-form-item label='单价/小时(元)' :labelCol="labelCol" :wrapperCol="wrapperCol" fieldDecoratorId="unit_price" :fieldDecoratorOptions="{rules: [{ required: true,message: '请输入商户密码'}],initialValue:row.unit_price}">
           <a-input type="number" />
         </a-form-item>
-        <a-form-item required label='单次最高收费/元' :labelCol="labelCol" :wrapperCol="wrapperCol" fieldDecoratorId="upper_price" :fieldDecoratorOptions="{rules: [{ required: true,message: '请输入商户地址'}],initialValue:row.upper_price}">
+        <a-form-item required label='24h最高收费(元)' :labelCol="labelCol" :wrapperCol="wrapperCol" fieldDecoratorId="upper_price" :fieldDecoratorOptions="{rules: [{ required: true,message: '请输入商户地址'}],initialValue:row.upper_price}">
           <a-input type="number" />
         </a-form-item>
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label='机柜状态' fieldDecoratorId="status">
@@ -73,7 +77,9 @@ const columns = [
     title: '设备id',
     key: 'code',
     dataIndex: 'code',
-    scopedSlots: { customRender: 'code' }
+    scopedSlots: { customRender: 'code' },
+     width: 150,
+      fixed: 'left'
   },
   {
     key: 'created_at',
@@ -85,7 +91,8 @@ const columns = [
   {
     key: 'type.name',
     title: '设备类型',
-    dataIndex: 'type.name'
+    dataIndex: 'type.name',
+     width: 150
   },
   {
     key: 'box_status_cn',
@@ -109,20 +116,22 @@ const columns = [
   },
   {
     key: 'upper_price',
-    title: '单次最高收费(元)',
+    title: '24h最高收费(元)',
     dataIndex: 'upper_price',
     width: 150
   },
   {
     key: 'store.name',
     title: '所属商户',
-    dataIndex: 'store.name'
+    dataIndex: 'store.name',
+     width: 150
   },
   {
     key: 'qrcode',
     title: '二维码',
     dataIndex: 'qrcode',
-    scopedSlots: { customRender: 'qrcode' }
+    scopedSlots: { customRender: 'qrcode' },
+     width: 150
   },
   {
     title: '操作',
@@ -141,7 +150,7 @@ export default {
       boxtype: null,
       status: true,
       labelCol: { span: 7 },
-      wrapperCol: { span: 17 }
+      wrapperCol: { span: 17 },
     }
   },
   watch: {
@@ -157,6 +166,16 @@ export default {
   methods: {
     fetch() {
       return 'BOX_LIST'
+    },
+    info() {},
+    async getQrcode(row) {
+      let res = await this.$api.BOX_QRCODE({code:row.code})
+      const newData = [...this.data]
+      const target = newData.filter(item => row.key === item.key)[0]
+      if (target) {
+        target.qrcode = res.url
+        this.data = newData
+      }
     },
     editFetch() {
       return 'BOX_PUT_POST'

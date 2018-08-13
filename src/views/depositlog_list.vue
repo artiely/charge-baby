@@ -20,7 +20,7 @@ const tabs = [
     key: '1'
   },
   {
-    title: '退换记录',
+    title: '退款记录',
     key: '2'
   },
   {

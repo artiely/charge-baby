@@ -7,7 +7,7 @@
       </template>
 
       <!-- table  -->
-      <a-table :columns="columns" size="middle" :dataSource="data" :pagination="false" :loading="loading" @change="handleTableChange" :scroll="{ x: scrollX }">
+      <a-table :columns="columns" size="middle" :dataSource="data" :pagination="false" :loading="loading" @change="handleTableChange" :scroll="{ x: 1300 }">
         <template slot="member_id" slot-scope="text,record">
           <a href="#">{{record.member.mobile}} - {{record.member.name}}</a>
         </template>
@@ -19,7 +19,7 @@
           <!-- <a href="#">{{record.member.mobile}} - {{record.member.name}}</a> -->
         </template>
         <template slot="operation" slot-scope="text, record">
-          <a @click="edit(record)">编辑</a>
+          <!-- <a @click="edit(record)">编辑</a> -->
           <a @click="detail(record)">详情</a>
         </template>
       </a-table>
@@ -71,18 +71,18 @@ const columns = [
   //   dataIndex: 'pay_time'
   // },
 
-  // {
-  //   key: 'box.code',
-  //   title: '机柜id',
-  //   width: 150,
-  //   dataIndex: 'box.code'
-  // },
-  // {
-  //   key: 'charge.code',
-  //   title: '充电宝id',
-  //   width: 150,
-  //   dataIndex: 'charge.code'
-  // },
+  {
+    key: 'box.code',
+    title: '机柜id',
+    width: 150,
+    dataIndex: 'box.code'
+  },
+  {
+    key: 'charger.code',
+    title: '充电宝id',
+    width: 150,
+    dataIndex: 'charger.code'
+  },
   {
     key: 'duration',
     title: '使用时长',

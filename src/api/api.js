@@ -49,6 +49,15 @@ const USER_INFO = params => {
   return fetch({ url: '/v1/user/profile', method: 'get', params: params })
 }
 
+const BOX_QRCODE = params => {
+  return fetch({ url: '/v1/boxes/qrcode', method: 'get', params: params })
+}
+
+const BOX_DOWNLOAD_IMG = params => {
+  return fetch({ url: '/v1/boxes/downloadimg', method: 'get', params: params })
+}
+
+
 const ORDER_PUT_POST = params => {
   if (!params.id) {
     return fetch({ url: `/v1/stores/`, method: 'post', data: params })
@@ -83,7 +92,9 @@ const apiList = {
   ORDER_PUT_POST,
   BOX_PUT_POST,
   BOXTYPE_PUT_POST,
-  USER_INFO
+  USER_INFO,
+  BOX_QRCODE,
+  BOX_DOWNLOAD_IMG
 }
 
 export default apiList
