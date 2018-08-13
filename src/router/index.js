@@ -10,91 +10,92 @@ import NProgress from 'nprogress'
 
 Vue.use(Router)
 
+export const asyncRouterMap = [
+  {
+    path: '/store_list',
+    name: 'store_list',
+    component: lazyLoading('views/store_list'),
+    meta: {
+      auth: true
+    }
+  },
+  {
+    path: '/box_list',
+    name: 'box_list',
+    component: lazyLoading('views/box_list'),
+    meta: {
+      auth: true
+    }
+  },
+  {
+    path: '/charge_list',
+    name: 'charge_list',
+    component: lazyLoading('views/charge_list'),
+    meta: {
+      auth: true
+    }
+  },
+  {
+    path: '/boxtype_list',
+    name: 'boxtype_list',
+    component: lazyLoading('views/boxtype_list'),
+    meta: {
+      auth: true
+    }
+  },
+  {
+    path: '/order_list',
+    name: 'order_list',
+    component: lazyLoading('views/order_list'),
+    meta: {
+      auth: true
+    }
+  },
+  {
+    path: '/order_list/order_info',
+    name: 'order_info',
+    component: lazyLoading('views/order_info'),
+    meta: {
+      auth: true
+    }
+  },
+  {
+    path: '/member_list',
+    name: 'member_list',
+    component: lazyLoading('views/member_list'),
+    meta: {
+      auth: true
+    }
+  },
+  {
+    path: '/depositlog_list',
+    name: 'depositlog_list',
+    component: lazyLoading('views/depositlog_list'),
+    meta: {
+      auth: true
+    }
+  },
+  {
+    path: '/setting_list',
+    name: 'setting_list',
+    component: lazyLoading('views/setting_list'),
+    meta: {
+      auth: true
+    }
+  }
+]
 let constantRouterMap = [
   {
     path: '/login',
     name: 'Login',
     component: Login
-  }
-]
-
-export const asyncRouterMap = [
+  },
   {
     path: '/',
     name: 'Home',
     component: Home,
     redirect: '/store_list',
-    children: [
-      {
-        path: '/store_list',
-        name: 'store_list',
-        component: lazyLoading('views/store_list'),
-        meta: {
-          auth: true,
-          title: '商户管理'
-        }
-      },
-      {
-        path: '/box_list',
-        name: 'box_list',
-        component: lazyLoading('views/box_list'),
-        meta: {
-          auth: true,
-          title: '机柜管理'
-        }
-      },
-      {
-        path: '/charge_list',
-        name: 'charge_list',
-        component: lazyLoading('views/charge_list'),
-        meta: {
-          auth: true,
-          title: '充电宝管理'
-        }
-      },
-      {
-        path: '/boxtype_list',
-        name: 'boxtype_list',
-        component: lazyLoading('views/boxtype_list'),
-        meta: {
-          auth: true,
-          title: '机柜类型'
-        }
-      },
-      {
-        path: '/order_list',
-        name: 'order_list',
-        component: lazyLoading('views/order_list'),
-        meta: {
-          auth: true,
-          title: '机柜类型'
-        }
-      },
-      {
-        path: '/member_list',
-        name: 'member_list',
-        component: lazyLoading('views/member_list'),
-        meta: {
-          auth: true
-        }
-      },
-      {
-        path: '/depositlog_list',
-        name: 'depositlog_list',
-        component: lazyLoading('views/depositlog_list'),
-        meta: {
-          auth: true
-        }
-      },
-      {
-        path: '/setting_list',
-        name: 'setting_list',
-        component: lazyLoading('views/setting_list'),
-        meta: {
-          auth: true
-        }
-      }
-    ]
+    children: asyncRouterMap
   },
   {
     path: '/*',
@@ -106,7 +107,6 @@ export const asyncRouterMap = [
     }
   }
 ]
-
 const MENU = [
   {
     title: '商户管理',
@@ -161,7 +161,7 @@ const router = new Router({
   scrollBehavior: () => ({
     y: 0
   }),
-  routes: [...constantRouterMap, ...asyncRouterMap]
+  routes: constantRouterMap
 })
 
 // 处理登录

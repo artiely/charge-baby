@@ -7,17 +7,20 @@
       </template>
 
       <!-- table  -->
-      <a-table :columns="columns" size="middle" :dataSource="data" :pagination="false" :loading="loading" @change="handleTableChange" :scroll="{ x: 1300 }">
+      <a-table :columns="columns" size="middle" :dataSource="data" :pagination="false" :loading="loading" @change="handleTableChange" :scroll="{ x: 1100 }">
         <template slot="member_id" slot-scope="text,record">
           <a href="#">{{record.member.mobile}} - {{record.member.name}}</a>
         </template>
         <template slot="status_cn" slot-scope="text,record">
           <a-popover title="流程时间" placement="rightTop">
             <template slot="content">
-              <a-timeline >
-                <a-timeline-item color="green" v-if="record.start_time"><a-icon slot="dot" type="clock-circle-o" />借出 {{record.start_time}}</a-timeline-item>
-                <a-timeline-item color="green" v-if="record.end_time"><a-icon slot="dot" type="clock-circle-o" />归还 {{record.end_time}}</a-timeline-item>
-                <a-timeline-item color="green" v-if="record.pay_time"><a-icon slot="dot" type="clock-circle-o" />支付 {{record.pay_time}}</a-timeline-item>
+              <a-timeline>
+                <a-timeline-item color="green" v-if="record.start_time">
+                  <a-icon slot="dot" type="clock-circle-o" />借出 {{record.start_time}}</a-timeline-item>
+                <a-timeline-item color="green" v-if="record.end_time">
+                  <a-icon slot="dot" type="clock-circle-o" />归还 {{record.end_time}}</a-timeline-item>
+                <a-timeline-item color="green" v-if="record.pay_time">
+                  <a-icon slot="dot" type="clock-circle-o" />支付 {{record.pay_time}}</a-timeline-item>
               </a-timeline>
             </template>
             <a-tag color="cyan" v-if="text=='已借出'">已借出</a-tag>
@@ -26,9 +29,9 @@
             <a-tag color="red" v-if="text=='已丢失'">已丢失</a-tag>
           </a-popover>
         </template>
-        <!-- <template slot="operation" slot-scope="text, record">
+        <template slot="operation" slot-scope="text, record">
           <a @click="detail(record)">详情</a>
-        </template> -->
+        </template>
       </a-table>
       <a-pagination :defaultCurrent="1" v-if="last_page>1" :total="total" @change="onChange" style="margin-top:6px" />
       <!-- cardlist -->
@@ -148,7 +151,7 @@ const columns = [
     key: 'store.name',
     title: '商户',
     dataIndex: 'store.name'
-  },
+  }
   // {
   //   title: '操作',
   //   dataIndex: 'operation',
@@ -185,7 +188,7 @@ export default {
       return 'ORDER_LIST'
     },
     detail(row) {
-      this.detailVisible = true
+      // this.detailVisible = true
       this.row = row
     }
   }

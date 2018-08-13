@@ -9,7 +9,8 @@
               <a-icon :type="item.icon" />
               <span>{{item.title}}</span>
             </span>
-            <a-menu-item :key="sub.path" v-for="sub in item.children"><a-icon :type="sub.icon" />{{sub.title}}</a-menu-item>
+            <a-menu-item :key="sub.path" v-for="sub in item.children">
+              <a-icon :type="sub.icon" />{{sub.title}}</a-menu-item>
           </a-sub-menu>
           <a-menu-item v-else :key="item.path">
             <a-icon :type="item.icon" />
