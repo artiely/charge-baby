@@ -2,7 +2,7 @@
   <div>
     <a-card>
       <div slot="title">
-        <a-input-search placeholder="商户名/设备类型" v-model="search"  style="width:400px" />
+        <a-input-search placeholder="商户名/设备类型" v-model="search" style="width:400px" />
         <a-range-picker @change="timeChange" format="YYYY-MM-DD" class="pull-right" />
       </div>
       <!-- table -->
@@ -36,6 +36,7 @@
         </template>
         <template slot="operation" slot-scope="text, record">
           <a @click="edit(record)">编辑</a>
+          <a-divider type="vertical" />
           <a @click="info(record)">详情</a>
         </template>
       </a-table>
@@ -67,6 +68,31 @@
           </a-button>
         </a-form-item>
       </a-form>
+    </a-modal>
+    <!-- detail -->
+    <a-modal title="机柜详情" v-model="infoVisible" @ok="infoVisible=false">
+      <div v-if="chargeItems.length>0">
+        <a-alert message="点击正在充电的充电宝可以强制弹出" banner />
+        <span v-for="item in chargeItems" :key="item.id">
+          <!-- <a-tag color="pink">pink</a-tag>
+          <a-tag color="red">red</a-tag>
+          <a-tag color="orange">orange</a-tag> -->
+          <a-popconfirm trigger="click" @confirm="pop(item)">
+            <div slot="title">
+              <div>确定强制弹出该充电宝吗？</div>
+              <div>强制弹出的充电宝不会加入订单</div>
+            </div>
+            <a-tag color="blue" v-if="item.status_cn=='充电'" class="charge-item">充电</a-tag>
+          </a-popconfirm>
+
+          <a-tag color="green" v-if="item.status_cn=='启用'" class="charge-item">启用</a-tag>
+          <a-tag color="cyan" v-if="item.status_cn=='使用'" class="charge-item">使用</a-tag>
+        </span>
+      </div>
+      <div v-else>
+        <a-icon type="meh-o" /> 暂无相关数据
+      </div>
+
     </a-modal>
   </div>
 </template>
@@ -149,6 +175,8 @@ export default {
       columns,
       boxtype: null,
       status: true,
+      infoVisible: false,
+      chargeItems: [],
       labelCol: { span: 7 },
       wrapperCol: { span: 17 }
     }
@@ -167,7 +195,24 @@ export default {
     fetch() {
       return 'BOX_LIST'
     },
-    info() {},
+    async info(row) {
+      this.infoVisible = true
+      let res = await this.$api.CHARGE_LIST({
+        page: 1,
+        limit: 50,
+        box_id: row.id
+      })
+      this.chargeItems = res.data
+    },
+    async pop(item) {
+      let res = await this.$api.CHARGE_POP({
+        box_id: item.box_id,
+        pipe: item.pipe
+      })
+      if (res.msg === 'success') {
+        this.$message.success('弹出成功')
+      }
+    },
     async getQrcode(row) {
       let res = await this.$api.BOX_QRCODE({ code: row.code })
       const newData = [...this.data]
@@ -202,3 +247,9 @@ export default {
   }
 }
 </script>
+<style>
+.charge-item {
+  margin-top: 20px;
+  margin-right: 20px;
+}
+</style>

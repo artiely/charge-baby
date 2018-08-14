@@ -53,6 +53,10 @@ const BOX_QRCODE = params => {
   return fetch({ url: '/v1/boxes/qrcode', method: 'get', params: params })
 }
 
+const CHARGE_POP = params => {
+  return fetch({ url: '/v1/operate/pop', method: 'post', params: params })
+}
+
 const BOX_DOWNLOAD_IMG = params => {
   return fetch({ url: '/v1/boxes/downloadimg', method: 'get', params: params })
 }
@@ -86,6 +90,7 @@ const apiList = {
   CHARGE_LIST,
   BOXTYPE_LIST,
   MEMBER_LIST,
+  CHARGE_POP,
   DEPOSITLOG_LIST,
   SETTING_LIST,
   ORDER_PUT_POST,
