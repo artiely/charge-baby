@@ -28,10 +28,15 @@
         </template>
         <template slot="qrcode" slot-scope="text, record">
           <span>
-            <span @click="getQrcode(record)">
+            <span @click="getQrcode(record)" style="cursor:pointer">
               <a-icon type="qrcode" /> 点击生成
             </span>
-            <a v-if="record.qrcode" :href="record.qrcode" :download="record.code">下载</a>
+            <a :href="record.qrcode" v-if="record.qrcode" :download="record.code" target="_block">
+              查看
+              <img :src="record.qrcode" :download="record.code" style="display:none">
+            </a>
+
+            <!-- <a v-if="record.qrcode" :href="record.qrcode" :download="record.code">下载</a> -->
           </span>
         </template>
         <template slot="operation" slot-scope="text, record">
@@ -233,33 +238,53 @@ export default {
       if (target) {
         target.qrcode = res.url
         this.data = newData
-        var canvas = document.getElementById('canvas')
-        console.log('canvas', canvas)
-        var cxt = canvas.getContext('2d')
+        // var canvas = document.getElementById('canvas')
+        // console.log('canvas', canvas)
+        // var cxt = canvas.getContext('2d')
         // var canvas = document.getElementById("canvas");
         // var img = canvas.toDataURL("image/png");
 
         // location = img;
-        const save = () => {
-          var img = new Image()
-          // img.crossOrigin = 'anonymous'
-          img.setAttribute('crossOrigin', 'anonymous')
-          img.onload = function() {
-            var _w = img.naturalWidth
-            var _h = img.naturalHeight
-            canvas.attr({ width: _w, height: _h })
-            cxt.drawImage(img, 0, 0)
-            var image = canvas.toDataURL('image/png')
-            var saveLink = document.createElement('a')
-            saveLink.href = image
-            saveLink.download = `${row.code}.png`
-            var clickevent = document.createEvent('MouseEvents')
-            clickevent.initEvent('click', true, false)
-            saveLink.dispatchEvent(clickevent)
-          }
-          img.src = res.url
-        }
-        save()
+        // const save = () => {
+        //   var img = new Image()
+        //   // img.crossOrigin = 'anonymous'
+        //   img.crossOrigin = ''
+        //   img.onload = function() {
+        //     var _w = img.naturalWidth
+        //     var _h = img.naturalHeight
+        //     canvas.attr({ width: _w, height: _h })
+        //     cxt.drawImage(img, 0, 0)
+        //     var image = canvas.toDataURL('image/png')
+        //     var saveLink = document.createElement('a')
+        //     saveLink.href = image
+        //     saveLink.download = `${row.code}.png`
+        //     var clickevent = document.createEvent('MouseEvents')
+        //     clickevent.initEvent('click', true, false)
+        //     saveLink.dispatchEvent(clickevent)
+        //   }
+        //   img.src = res.url
+        // }
+        // save()
+        // **************************************
+        // var re, pic
+        // function savepic() {
+        //   if (document.all.a1 == null) {
+        //     var objIframe = document.createElement('IFRAME')
+        //     let app = document.getElementById('app')
+        //     app.insertBefore(objIframe, app.childNodes[0])
+        //     objIframe.outerHTML =
+        //       "<iframe name=a1 style='width:400px;hieght:300px' src=" +
+        //       res.url +
+        //       '></iframe>'
+        //     re = setTimeout('savepic()', 1)
+        //   } else {
+        //     clearTimeout(re)
+        //     pic = window.open(res.url, 'a1')
+        //     pic.document.execCommand('SaveAs')
+        //     document.all.a1.removeNode(true)
+        //   }
+        // }
+        // savepic()
       }
     },
     editFetch() {
