@@ -3,20 +3,22 @@
     <a-table :columns="columns" size="middle" :dataSource="data" :pagination="false" :loading="loading" @change="handleTableChange" :scroll="{ x: scrollX }">
       <template slot="operation" slot-scope="text, record">
         <!-- <a @click="edit(record)">编辑</a> -->
-        <a-popconfirm
-          v-if="data.length"
-          title="您权限不足"
-          @confirm="() => {}">
-          <a >编辑</a>
+        <a-popconfirm v-if="data.length" title="您权限不足" @confirm="() => {}">
+          <a>编辑</a>
         </a-popconfirm>
       </template>
     </a-table>
-    <a-pagination  v-if="last_page>1" :defaultCurrent="1" :total="total" @change="onChange" style="margin-top:6px" />
+    <a-pagination v-if="last_page>1" :defaultCurrent="1" :total="total" @change="onChange" style="margin-top:6px" />
   </div>
 </template>
 <script>
 import tableMixins from '../mixins/table.js'
 const columns = [
+  {
+    key: 'id',
+    title: 'id',
+    dataIndex: 'id'
+  },
   {
     key: 'key',
     title: 'key',
@@ -45,18 +47,12 @@ export default {
   mixins: [tableMixins],
   data() {
     return {
-      columns,
-      visible: false,
-      row: ''
+      columns
     }
   },
   methods: {
     fetch() {
       return 'SETTING_LIST'
-    },
-    edit(row) {
-      this.row = row
-      this.visible = true
     }
   }
 }

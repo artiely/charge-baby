@@ -8,9 +8,6 @@
     </div>
     <!-- table -->
     <a-table :columns="columns" size="middle" :dataSource="data" :width="600" :pagination="false" :loading="loading" @change="handleTableChange" :scroll="{ x: scrollX }">
-      <template slot="created_at" slot-scope="text,record">
-        <a href="#">{{record.mobile}} - {{record.name}}</a>
-      </template>
       <template slot="power" slot-scope="text, record">
         <a-progress :percent="record.power" size="small" />
       </template>
@@ -26,7 +23,7 @@
     <a-pagination v-if="last_page>1" :defaultCurrent="1" :total="total" @change="onChange" style="margin-top:6px" />
     </a-card>
     <!-- record -->
-    <record-list v-bind:recordVisible.sync="recordVisible" :chargeId="row.id"></record-list>
+    <record-list v-model="recordVisible" :chargeId="row.id"></record-list>
   </div>
 </template>
 <script>
@@ -69,9 +66,9 @@ const columns = [
     width: 60
   },
   {
-    key: 'store.name',
+    key: 'box.store.name',
     title: '所属商户',
-    dataIndex: 'store.name'
+    dataIndex: 'box.store.name'
   },
   {
     title: '操作',

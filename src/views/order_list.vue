@@ -151,6 +151,10 @@ const columns = [
     key: 'store.name',
     title: '商户',
     dataIndex: 'store.name'
+  }, {
+    key: 'back_store.name',
+    title: '归还商户',
+    dataIndex: 'back_store.name'
   }
   // {
   //   title: '操作',

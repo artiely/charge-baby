@@ -35,6 +35,8 @@
           </span>
         </template>
         <template slot="operation" slot-scope="text, record">
+          <a @click="history(record)">使用记录</a>
+          <a-divider type="vertical" />
           <a @click="edit(record)">编辑</a>
           <a-divider type="vertical" />
           <a @click="info(record)">详情</a>
@@ -70,10 +72,12 @@
       </a-form>
     </a-modal>
     <!-- detail -->
-    <a-modal title="机柜详情" v-model="infoVisible" @ok="infoVisible=false">
+    <a-modal v-model="infoVisible" @ok="infoVisible=false" :width="600">
+      <div slot="title">机柜详情
+        <a v-if="chargeItems[0]&&chargeItems[0].box"> {{chargeItems[0].box.code}}</a>
+      </div>
       <div v-if="chargeItems.length>0">
-        <a-alert message="点击正在充电的充电宝可以强制弹出" banner />
-        <span v-for="item in chargeItems" :key="item.id">
+        <span v-for="item in chargeItems" :key="item.id" style="display:inline-block;width:120px">
           <!-- <a-tag color="pink">pink</a-tag>
           <a-tag color="red">red</a-tag>
           <a-tag color="orange">orange</a-tag> -->
@@ -82,22 +86,27 @@
               <div>确定强制弹出该充电宝吗？</div>
               <div>强制弹出的充电宝不会加入订单</div>
             </div>
-            <a-tag color="blue" v-if="item.status_cn=='充电'" class="charge-item">充电</a-tag>
+            <a-tag color="blue" v-if="item.status_cn=='充电'" class="charge-item">{{item.id}}.充电 {{item.power}}%</a-tag>
           </a-popconfirm>
 
-          <a-tag color="green" v-if="item.status_cn=='启用'" class="charge-item">启用</a-tag>
-          <a-tag color="cyan" v-if="item.status_cn=='使用'" class="charge-item">使用</a-tag>
+          <a-tag color="green" v-if="item.status_cn=='启用'" class="charge-item">{{item.id}}.启用 {{item.power}}%</a-tag>
+          <a-tag color="cyan" v-if="item.status_cn=='使用'" class="charge-item">{{item.id}}.使用 {{item.power}}%</a-tag>
         </span>
+        <a-alert message="点击正在充电的充电宝可以强制弹出" banner style="margin-top:20px" />
       </div>
       <div v-else>
         <a-icon type="meh-o" /> 暂无相关数据
       </div>
 
     </a-modal>
+    <canvas id="canvas"></canvas>
+    <!-- record -->
+    <record-list v-model="recordVisible" :boxId="row.id"></record-list>
   </div>
 </template>
 <script>
 import tableMixins from '../mixins/table.js'
+import recordList from './record_list'
 const columns = [
   {
     title: '设备id',
@@ -163,19 +172,23 @@ const columns = [
     title: '操作',
     dataIndex: 'operation',
     scopedSlots: { customRender: 'operation' },
-    width: 100,
+    width: 200,
     fixed: 'right'
   }
 ]
 
 export default {
   mixins: [tableMixins],
+  components: {
+    recordList
+  },
   data() {
     return {
       columns,
       boxtype: null,
       status: true,
       infoVisible: false,
+      recordVisible: false,
       chargeItems: [],
       labelCol: { span: 7 },
       wrapperCol: { span: 17 }
@@ -220,6 +233,33 @@ export default {
       if (target) {
         target.qrcode = res.url
         this.data = newData
+        var canvas = document.getElementById('canvas')
+        console.log('canvas', canvas)
+        var cxt = canvas.getContext('2d')
+        // var canvas = document.getElementById("canvas");
+        // var img = canvas.toDataURL("image/png");
+
+        // location = img;
+        const save = () => {
+          var img = new Image()
+          // img.crossOrigin = 'anonymous'
+          img.setAttribute('crossOrigin', 'anonymous')
+          img.onload = function() {
+            var _w = img.naturalWidth
+            var _h = img.naturalHeight
+            canvas.attr({ width: _w, height: _h })
+            cxt.drawImage(img, 0, 0)
+            var image = canvas.toDataURL('image/png')
+            var saveLink = document.createElement('a')
+            saveLink.href = image
+            saveLink.download = `${row.code}.png`
+            var clickevent = document.createEvent('MouseEvents')
+            clickevent.initEvent('click', true, false)
+            saveLink.dispatchEvent(clickevent)
+          }
+          img.src = res.url
+        }
+        save()
       }
     },
     editFetch() {
@@ -240,6 +280,10 @@ export default {
           this.save(data)
         }
       })
+    },
+    history(row) {
+      this.row = row
+      this.recordVisible = true
     }
   },
   created() {
@@ -249,7 +293,7 @@ export default {
 </script>
 <style>
 .charge-item {
-  margin-top: 20px!important;
-  margin-right: 20px!important;
+  margin-top: 20px !important;
+  margin-right: 20px !important;
 }
 </style>

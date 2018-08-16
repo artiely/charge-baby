@@ -28,7 +28,7 @@
       <a-pagination :defaultCurrent="1" v-if="last_page>1" :total="total" @change="onChange" style="margin-top:6px" />
     </a-card>
     <!-- record -->
-    <record-list v-bind:recordVisible.sync="recordVisible" :memberId="row.id"></record-list>
+    <record-list v-model="recordVisible" :memberId="row.id"></record-list>
   </div>
 </template>
 <script>

@@ -19,7 +19,7 @@ export default function fetch(options) {
       },
       validateStatus: function(status) {
         console.log('status', status)
-        return status >= 200 && status < 500 // default
+        return status >= 200 && status < 600 // default
       },
       transformResponse: [
         //   (data) => {

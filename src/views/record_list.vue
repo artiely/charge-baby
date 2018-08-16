@@ -1,8 +1,26 @@
 <template>
-  <a-modal style="top:10px" title="使用记录" v-model="recordVisible" @ok="recordVisible=false" :maskClosable="false" :width="768">
+  <a-modal style="top:10px" title="使用记录" v-model="visible" @ok="visible=false" :maskClosable="false" :width="768">
     <a-table :columns="columns" :dataSource="data" bordered :pagination="false" size="small" :loading="loading">
-      <template slot="name" slot-scope="text">
-        <a href="#">{{text}}</a>
+      <template slot="member_id" slot-scope="text,record">
+        <a href="#">{{record.member.mobile}}-{{record.member.name}}</a>
+      </template>
+      <template slot="status_cn" slot-scope="text,record">
+        <a-popover title="流程时间" placement="rightTop">
+          <template slot="content">
+            <a-timeline>
+              <a-timeline-item color="green" v-if="record.start_time">
+                <a-icon slot="dot" type="clock-circle-o" />借出 {{record.start_time}}</a-timeline-item>
+              <a-timeline-item color="green" v-if="record.end_time">
+                <a-icon slot="dot" type="clock-circle-o" />归还 {{record.end_time}}</a-timeline-item>
+              <a-timeline-item color="green" v-if="record.pay_time">
+                <a-icon slot="dot" type="clock-circle-o" />支付 {{record.pay_time}}</a-timeline-item>
+            </a-timeline>
+          </template>
+          <a-tag color="cyan" v-if="text=='已借出'">已借出</a-tag>
+          <a-tag color="blue" v-if="text=='已归还'">已归还</a-tag>
+          <a-tag color="green" v-if="text=='已支付'">已支付</a-tag>
+          <a-tag color="red" v-if="text=='已丢失'">已丢失</a-tag>
+        </a-popover>
       </template>
     </a-table>
     <a-pagination :defaultCurrent="1" v-if="last_page>1" :total="total" @change="onChangePage" style="margin-top:6px" />
@@ -13,8 +31,8 @@
 const columns = [
   {
     title: '用户信息',
-    key: 'member_id',
-    dataIndex: 'member_id',
+    key: 'member.mobile',
+    dataIndex: 'member.mobile',
     scopedSlots: { customRender: 'member_id' }
   },
 
@@ -75,18 +93,24 @@ const columns = [
     key: 'store.name',
     title: '商户',
     dataIndex: 'store.name'
+  },
+  {
+    key: 'back_store.name',
+    title: '归还商户',
+    dataIndex: 'back_store.name'
   }
 ]
 
 export default {
   name: 'record-list',
   props: {
-    recordVisible: {
+    value: {
       type: Boolean,
       default: false
     },
     chargeId: [String, Number],
-    memberId: [String, Number]
+    memberId: [String, Number],
+    boxId: [String, Number]
   },
   data() {
     return {
@@ -98,13 +122,17 @@ export default {
         limit: 10
       },
       loading: false,
-      charge_id: this.chargeId,
-      member_id: this.memberId,
       total: 10,
       last_page: 0
     }
   },
   watch: {
+    value: {
+      handler(val) {
+        this.visible = val
+      },
+      immediate: true
+    },
     query: {
       handler() {
         this.getHistory()
@@ -124,9 +152,15 @@ export default {
       },
       immediate: true
     },
-    recordVisible: {
+    boxId: {
+      handler() {
+        this.getHistory()
+      },
+      immediate: true
+    },
+    visible: {
       handler(val) {
-        this.$emit('update:recordVisible', val)
+        this.$emit('input', val)
       }
     }
   },
@@ -137,7 +171,8 @@ export default {
       let res = await this.$api.ORDER_LIST({
         ...this.query,
         charger_id: this.chargeId,
-        member_id: this.memberId
+        member_id: this.memberId,
+        box_id: this.boxId
       })
       this.loading = false
       this.data = res.data

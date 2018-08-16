@@ -56,10 +56,7 @@ export default {
       })
       if (res.data) {
         this.loading = false
-        this.data = res.data.map((v, i) => {
-          v.key = i
-          return v
-        })
+        this.data = res.data
         this.total = res.total
         this.last_page = res.last_page
       }

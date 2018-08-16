@@ -2,13 +2,18 @@
   <div>
     <a-card>
       <div slot="title">
-        <a-input-search placeholder="商户名" v-model="search"  style="width:400px" />
+        <a-input-search placeholder="商户名" v-model="search" style="width:400px" />
         <a-button type="primary" @click="add" class="pull-right">添加商户</a-button>
       </div>
       <a-table :columns="columns" size="middle" :dataSource="data" :pagination="false" :loading="loading" @change="handleTableChange" :scroll="{ x: scrollX }">
         <template slot="name" slot-scope="text,record">
           <a>{{record.mobile |telFormat()}}</a> -
           <a>{{record.name}}</a>
+        </template>
+        <template slot="status" slot-scope="text,record">
+
+          <a-tag color="#f50" v-if="text==0">停用</a-tag>
+          <a-tag color="#87d068" v-else>启用</a-tag>
         </template>
         <template slot="operation" slot-scope="text, record">
           <a @click="edit(record)">编辑</a>
@@ -66,6 +71,13 @@ const columns = [
     key: 'created_at',
     title: '入住时间',
     dataIndex: 'created_at',
+    width: 150
+  },
+  {
+    key: 'status',
+    title: '状态',
+    dataIndex: 'status',
+    scopedSlots: { customRender: 'status' },
     width: 150
   },
   {
